@@ -43,6 +43,7 @@ Practice a common integration pattern on real public data: **pull from an API â†
 ## Production notes (for the README)
 
 - **Authentication:** real business systems need credentials stored securely, not in the code.
+- **Least privilege:** use a dedicated SQL login with only the permissions the loader needs (read/write on the grants tables, not `sa`, which can do anything on the server). We use `sa` only because this is a local Docker container.
 - **Governance:** IT approval, data loss prevention (DLP) policies and a named owner for the integration.
 - **Monitoring:** alerts when a run fails, plus a manual fallback if the integration goes down.
 - **Human review** before anything updates a system of record.
