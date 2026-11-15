@@ -13,7 +13,7 @@ Practice a common integration pattern on real public data: **pull from an API â†
 ## What we're building
 
 1. **Pull.** A Python script calls the projects/search endpoint for a fixed set of grants (e.g., one organization or one disease area for one fiscal year), pages through all results, and saves them to a CSV.
-2. **Load.** Load the results into a SQL Server table. Use the project number as the key so re-runs update rows instead of creating duplicates.
+2. **Load.** Load the results into a SQL Server table. Use the application ID (`appl_id`) as the key so re-runs update rows instead of creating duplicates. (The plan originally said project number, but project numbers repeat for multi-component grants: in our data, 5 project numbers cover 29 rows, so they can't be the key.)
 3. **Reconcile.** Create a fake "internal grants tracker" (CSV or Excel) for the same grants with a few deliberate errors: a wrong award amount, a wrong end date and a missing project. A T-SQL query flags every mismatch.
 4. **Log changes.** A ChangeLog table records the field, old value, new value and timestamp whenever a re-run finds a difference.
 5. **Write it up.** A README covering the problem, how it works, how to run it, what would change in production and how the pattern applies to other systems.
