@@ -3,6 +3,7 @@
 Reads data/usf_grants_fy2022_2025.csv, copies it into dbo.Grants_Staging,
 then runs sql/02_upsert_grants.sql (a MERGE) to insert new appl_ids and
 update changed rows in dbo.Grants. Everything runs in one transaction.
+Milestone 6: the same file first logs each changed field to dbo.ChangeLog.
 
 Run from the project folder:  ./run.sh python load_grants.py
 """
@@ -92,7 +93,7 @@ try:
     cursor.execute("TRUNCATE TABLE dbo.Grants_Staging;")  # empty last run's staging rows
     cursor.executemany(insert_sql, rows)       # copy every CSV row into staging
     cursor.execute(upsert_sql)                 # MERGE staging into dbo.Grants
-    staged, inserted, updated = cursor.fetchone()  # the counts row the MERGE file returns
+    staged, inserted, updated, logged = cursor.fetchone()  # the counts row the MERGE file returns
     conn.commit()                              # save everything at once
 except Exception:
     conn.rollback()                            # any error: undo all of it, including the TRUNCATE
@@ -106,3 +107,4 @@ print(f"Staged:    {staged}")
 print(f"Inserted:  {inserted}")
 print(f"Updated:   {updated}")
 print(f"Unchanged: {staged - inserted - updated}")
+print(f"Changed fields logged to dbo.ChangeLog: {logged}")
